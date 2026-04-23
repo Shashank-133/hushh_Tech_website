@@ -45,8 +45,6 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-plaid': ['react-plaid-link'],
-          'vendor-mdx': ['@mdx-js/react'],
         },
       },
     },
