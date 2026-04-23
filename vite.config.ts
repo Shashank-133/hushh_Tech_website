@@ -41,10 +41,24 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
-          'vendor-supabase': ['@supabase/supabase-js'],
+        manualChunks(id: string) {
+          if (id.includes('node_modules')) {
+            const moduleName = id.split('node_modules/')[1].split('/')[0]
+            switch (moduleName) {
+              case 'react':
+              case 'react-dom':
+              case 'react-router-dom':
+                return 'vendor-react'
+              case '@chakra-ui':
+              case '@emotion':
+              case 'framer-motion':
+                return 'vendor-ui'
+              case '@supabase':
+                return 'vendor-supabase'
+              default:
+                return 'vendor'
+            }
+          }
         },
       },
     },
