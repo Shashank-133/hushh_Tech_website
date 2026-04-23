@@ -27,13 +27,10 @@ export default defineConfig({
   plugins: [
     react(),
     mdx({
-      // ensure MDX compiles to React JSX
       jsxImportSource: 'react',
       providerImportSource: '@mdx-js/react',
       remarkPlugins: [remarkFrontmatter, remarkGfm],
       rehypePlugins: [rehypeSlug],
-      // optional: treat .md files as MDX too
-      // format: 'detect'
     }),
   ],
   build: {
@@ -41,24 +38,32 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     target: 'es2017',
-    chunkSizeWarningLimit: 5000,
-    // Security: Strip ALL console statements in production builds
-    // Prevents exposure of tokens, financial data, and internal logs
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-plaid': ['react-plaid-link'],
+          'vendor-mdx': ['@mdx-js/react'],
+        },
+      },
+    },
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,     // Remove console.log, warn, error, etc.
-        drop_debugger: true,    // Remove debugger statements
+        drop_console: true,
+        drop_debugger: true,
         pure_funcs: ['console.log', 'console.warn', 'console.info', 'console.debug'],
       },
       format: {
-        comments: false,        // Remove all comments from output
+        comments: false,
       },
     },
   },
   server: {
     proxy: {
-      // Forward API calls to the serverless host in dev (vercel dev runs on 3000 by default)
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
